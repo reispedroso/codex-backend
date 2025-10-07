@@ -4,5 +4,5 @@ namespace codex_backend.Application.Services.Interfaces;
 
 public interface IReservationService
 {
-    Task<ReservationReadDto> CreateReservationAsync(ReservationCreateDto reservationDto);
+    Task<ReservationReadDto> CreateReservationAsync(ReservationCreateDto reservationDto, Guid userId);
 }

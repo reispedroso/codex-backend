@@ -6,22 +6,23 @@ namespace codex_backend.Application.Factories;
 
 public class UserFactory : IUserFactory
 {
-    public async Task<User?> CreateUserAsync(UserCreateDto dto)
+  public Task<User?> CreateUser(UserCreateDto dto, Guid roleId)
     {
-        return new User
+        var user = new User
         {
-            Id = dto.Id,
+            Id = Guid.NewGuid(),
             Username = dto.Username,
-            FirstName = dto.FirstName + " ",
+            FirstName = dto.FirstName,
             LastName = dto.LastName,
             Email = dto.Email,
-            Password_Hash = PasswordHasher.Hash(dto.Password_Hash!),
-            RoleId = dto.RoleId,
+            Password_Hash = PasswordHasher.Hash(dto.Password!),
+            RoleId = roleId,
             CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc),
             UpdatedAt = null,
             DeletedAt = null
         };
 
+        return Task.FromResult<User?>(user);
     }
 
 }

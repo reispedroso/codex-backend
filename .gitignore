@@ -14,3 +14,9 @@ obj/
 
 # Visual Studio Code files
 .vscode/
+
+# App settings
+appsettings.json
+
+# Garantir que appsettings.json não será enviado ao repositório
+/appsettings.json

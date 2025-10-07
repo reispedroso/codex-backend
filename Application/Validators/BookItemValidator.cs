@@ -34,10 +34,6 @@ public class BookItemValidator
             errors.Add("Quantity must be greater than zero.");
         }
 
-        if (dto.Id == Guid.Empty)
-        {
-            errors.Add("Id cannot be an empty GUID.");
-        }
 
         return errors;
     }

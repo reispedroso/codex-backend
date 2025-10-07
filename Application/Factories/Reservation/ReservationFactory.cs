@@ -13,7 +13,7 @@ public class ReservationFactory(
 {
     private readonly IBookItemRepository bookItemRepo = bookItemRepo;
     private readonly IStorePolicyPricesRepository _policyPriceRepo = policyPriceRepo;
-    public async Task<Reservation> CreateReservationAsync(ReservationCreateDto dto)
+    public async Task<Reservation> CreateReservationAsync(ReservationCreateDto dto, Guid userId)
     {
         var policyPrice = await _policyPriceRepo.GetPolicyPriceByIdAsync(dto.PriceId)
         ?? throw new Exception("Policy not found");
@@ -30,7 +30,7 @@ public class ReservationFactory(
         return new Reservation
         {
             Id = Guid.NewGuid(),
-            UserId = dto.UserId,
+            UserId = userId,
             BookItemId = dto.BookItemId,
             PoliciesId = policyPrice.StorePolicyId,
             Status = ReservationStatus.Pending,

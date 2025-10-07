@@ -27,7 +27,7 @@ public class BookReviewRepository(AppDbContext context) : IBookReviewRepository
     {
         return await _context.BookReviews
             .Include(br => br.Book)
-            .Where(br => br.Book.Id == bookId)
+            .Where(br => br.Book!.Id == bookId)
             .ToListAsync();
     }
 
@@ -35,7 +35,7 @@ public class BookReviewRepository(AppDbContext context) : IBookReviewRepository
     {
         return await _context.BookReviews
             .Include(br => br.Book)
-            .Where(br => br.Book.Title == bookName)
+            .Where(br => br.Book!.Title == bookName)
             .ToListAsync();
     }
 

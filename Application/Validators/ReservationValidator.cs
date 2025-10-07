@@ -9,8 +9,6 @@ public static class ReservationValidator
     {
         var errors = new List<string>();
 
-        if (dto.UserId == Guid.Empty)
-            errors.Add("UserId is required");
         if (dto.BookItemId == Guid.Empty)
             errors.Add("BookItemId is required");
         if (dto.PoliciesId == Guid.Empty)

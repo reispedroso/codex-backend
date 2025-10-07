@@ -5,7 +5,7 @@ using codex_backend.Application.Services.Interfaces;
 using codex_backend.Enums;
 using codex_backend.Models;
 
-namespace codex_backend.Application.Services;
+namespace codex_backend.Application.Services.Implementations;
 
 public class RentalService(
     IRentalRepository rentalRepository,

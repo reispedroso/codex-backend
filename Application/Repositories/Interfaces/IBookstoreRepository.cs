@@ -8,7 +8,7 @@ public interface IBookstoreRepository
     Task<Bookstore?> GetBookstoreByNameAsync(string bookstoreName);
     Task<Bookstore?> GetBookstoreByIdAsync(Guid bookstoreId);
     Task<IEnumerable<Bookstore>> GetBookstoresByAdminIdAsync(Guid adminId);
-    Task<Bookstore> GetSingleBookstoreByAdminIdAsync(Guid adminId);
+    Task<Bookstore?> GetSingleBookstoreByAdminIdAsync(Guid adminId);
 
     Task<IEnumerable<Bookstore>> GetAllBookstoresAsync();
     Task<bool> UpdateBookstoreAsync(Bookstore bookstore);

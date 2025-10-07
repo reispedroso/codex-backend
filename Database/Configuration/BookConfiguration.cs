@@ -15,7 +15,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
                .HasMaxLength(300);
 
         builder.HasOne(b => b.Author)
-               .WithMany(a => a.Books)
+               .WithMany(a => a.Books!)
                .HasForeignKey(b => b.AuthorId);
 
         builder.HasOne(b => b.Category)

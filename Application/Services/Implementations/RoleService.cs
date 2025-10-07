@@ -1,7 +1,7 @@
 using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Application.Services.Interfaces;
 
-namespace   codex_backend.Application.Services;
+namespace codex_backend.Application.Services.Implementations;
 
 public class RoleService(IRoleRepository repository) 
 : IRoleService

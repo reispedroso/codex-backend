@@ -39,7 +39,8 @@ public class BookstoreRepository(AppDbContext context) : IBookstoreRepository
         .ToListAsync();
     }
 
-    public async Task<Bookstore> GetSingleBookstoreByAdminIdAsync(Guid adminId)
+    // MUDANÇA: O tipo de retorno agora é 'Task<Bookstore?>' para permitir nulos.
+    public async Task<Bookstore?> GetSingleBookstoreByAdminIdAsync(Guid adminId)
     {
         return await _context.Bookstores.FirstOrDefaultAsync(bs => bs.OwnerUserId == adminId);
     }

@@ -5,7 +5,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Application.Services.Interfaces;
 using codex_backend.Models;
 
-namespace codex_backend.Application.Services;
+namespace codex_backend.Application.Services.Implementations;
 
 public class ReservationService(
     IReservationRepository reservationRepository,
@@ -19,10 +19,11 @@ public class ReservationService(
     private readonly InventoryHandler _inventory = inventory;
 
     public async Task<ReservationReadDto> CreateReservationAsync(
-    ReservationCreateDto reservationDto
+    ReservationCreateDto reservationDto,
+    Guid userId
     )
     {
-        var newReservation = await _reservationFactory.CreateReservationAsync(reservationDto);
+        var newReservation = await _reservationFactory.CreateReservationAsync(reservationDto, userId);
 
         await _inventory.ReserveBookItem(reservationDto.BookItemId);
 
@@ -41,7 +42,7 @@ public class ReservationService(
         PickupDate = res.PickupDate,
         DueDate = res.DueDate,
         PriceAmountSnapshot = res.PriceAmountSnapshot,
-        CurrencySnapshot = res.CurrencySnapshot,
+        CurrencySnapshot = res.CurrencySnapshot!,
         CreatedAt = res.CreatedAt,
         UpdatedAt = res.UpdatedAt
     };

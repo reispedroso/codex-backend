@@ -5,6 +5,6 @@ namespace codex_backend.Application.Factories;
 
 public interface IUserFactory
 {
-    Task<User?> CreateUserAsync(UserCreateDto dto);
+    Task<User?> CreateUser(UserCreateDto dto, Guid roleId);
     
 }

@@ -1,5 +1,5 @@
 using codex_backend.Application.Dtos;
-using codex_backend.Application.Services;
+using codex_backend.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,94 +7,56 @@ namespace codex_backend.Application.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BookController(BookService service) : ControllerBase
+[Authorize]
+public class BookController(IBookService service) : ControllerBase
 {
-    private readonly BookService _service = service;
+    private readonly IBookService _service = service;
     [HttpPost("create-book")]
     [Authorize]
     public async Task<IActionResult> Post([FromBody] BookCreateDto book)
     {
-        try
-        {
-           var createdBook = await _service.CreateBookAsync(book);
-           return Ok(createdBook.Title);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdBook = await _service.CreateBookAsync(book);
+        return Ok(createdBook.Title);
+
     }
 
     [HttpGet("get-all-books")]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<BookReadDto>>> GetAll()
     {
-        try
-        {
-            var books = await _service.GetAllBooksAsync();
-            return Ok(books);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var books = await _service.GetAllBooksAsync();
+        return Ok(books);
+
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize]
     public async Task<ActionResult<BookReadDto>> BetById(Guid id)
     {
-        try
-        {
-            var book = await _service.GetBookByIdAsync(id);
-            return Ok(book);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var book = await _service.GetBookByIdAsync(id);
+        return Ok(book);
+
     }
 
     [HttpGet("by-name/{title}")]
-    [Authorize]
     public async Task<ActionResult<BookReadDto>> GetByName(string title)
     {
-        try
-        {
-            var book = await _service.GetBookByNameAsync(title);
-            return Ok(book);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var book = await _service.GetBookByNameAsync(title);
+        return Ok(book);
+
     }
-    
-    [HttpPut("update-book/{id:guid}")]
+
+    [HttpPut("update-book/{id}")]
     public async Task<ActionResult<BookReadDto>> Put(Guid id, [FromBody] BookUpdateDto book)
     {
-        try
-        {
-            var updatedBook = await _service.UpdateBookAsync(id, book);
-            return Ok(updatedBook);
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        var updatedBook = await _service.UpdateBookAsync(id, book);
+        return Ok(updatedBook);
+
     }
-    
-    [HttpDelete("delete-book/{id:guid}")]
+
+    [HttpDelete("delete-book/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        try
-        {
-            await _service.DeleteBookAsync(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        await _service.DeleteBookAsync(id);
+        return NoContent();
+
     }
 }

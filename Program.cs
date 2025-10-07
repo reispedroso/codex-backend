@@ -1,23 +1,24 @@
-using System.Text.Json.Serialization;
-using codex_backend.Database;
-using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
-using codex_backend.Application.Repositories.Interfaces;
+using System.Text;
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using codex_backend.Database;
 using codex_backend.Infra.Repositories;
-using codex_backend.Models;
-using codex_backend.Application.Services;
-using codex_backend.Application.Factories;
 using codex_backend.Application.Handlers;
 using codex_backend.Application.Settings;
+using codex_backend.Application.Factories;
 using codex_backend.Application.Services.Token;
+using codex_backend.Application.Common.Middleware;
 using codex_backend.Application.Services.Interfaces;
-// NOVOS USINGS ADICIONADOS AQUI
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using codex_backend.Application.Authorization.Handlers;
+using codex_backend.Application.Repositories.Interfaces;
+using codex_backend.Application.Services.Implementations;
+using codex_backend.Application.Authorization.Requirements;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 Env.Load();
 
@@ -55,7 +56,7 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = tokenSettings.Issuer,
+        ValidIssuer = tokenSettings!.Issuer,
         ValidateAudience = true,
         ValidAudience = tokenSettings.Audience,
         ValidateLifetime = true,
@@ -64,7 +65,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanManageBookstorePolicy", policy =>
+        policy.AddRequirements(new ResourceOwnerRequirement()));
+});
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -88,40 +94,38 @@ builder.Services.AddScoped<IStorePolicyRepository, StorePolicyRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
-
 //Services
-builder.Services.AddScoped<BookService>();
-builder.Services.AddScoped<BookItemService>();
-builder.Services.AddScoped<BookstoreService>();
-builder.Services.AddScoped<RentalService>();
-builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<IBookService,BookService>();
+builder.Services.AddScoped<IBookItemService, BookItemService>();
+builder.Services.AddScoped<IBookstoreService, BookstoreService>();
+builder.Services.AddScoped<IRentalService, RentalService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
-//Factoreis
+//Factories
 builder.Services.AddScoped<IReservationFactory, ReservationFactory>();
 builder.Services.AddScoped<IRentalFactory, RentalFactory>();
 builder.Services.AddScoped<IUserFactory, UserFactory>();
 
 //Handlers
 builder.Services.AddScoped<InventoryHandler>();
-
+builder.Services.AddSingleton<IAuthorizationHandler, BookstoreAuthorizationHandler>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseJwtMiddleware();
+
+
+app.UseAuthentication(); 
+// app.UseJwtMiddleware(); // <-- Comentado
+
 app.UseAuthorization();
 app.MapControllers();
-
 
 app.Run();

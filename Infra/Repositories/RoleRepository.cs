@@ -19,7 +19,7 @@ public class RoleRepository(AppDbContext context) : IRoleRepository
     public async Task<Guid> GetRoleIdAsync(string name)
     {
         var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == name);
-        return role.Id;
+        return role!.Id;
     }
 
 

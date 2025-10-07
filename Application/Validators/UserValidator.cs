@@ -19,9 +19,9 @@ public class UserValidator
         else if (dto.Username.Length < 5 || dto.Username.Length > 20)
             errors.Add("Username must be between 5 and 20 characters");
         
-        if (string.IsNullOrWhiteSpace((dto.Password_Hash)))
+        if (string.IsNullOrWhiteSpace((dto.Password)))
             errors.Add("Password is required");
-        else if (!PasswordValidator.IsValidPassword(dto.Password_Hash))
+        else if (!PasswordValidator.IsValidPassword(dto.Password))
             errors.Add("Password is invalid");
 
         return errors;
@@ -37,13 +37,6 @@ public class UserValidator
         if (!string.IsNullOrWhiteSpace(dto.Username) &&
             (dto.Username.Length < 3 || dto.Username.Length > 20))
             errors.Add("Username must be between 3 and 20 characters");
-
-        if (!string.IsNullOrWhiteSpace(dto.Password_Hash) &&
-            !PasswordValidator.IsValidPassword(dto.Password_Hash))
-            errors.Add("Password does not meet security requirements");
-
-        if (dto.RoleId == Guid.Empty)
-            errors.Add("RoleId cannot be empty.");
 
         return errors;
     }

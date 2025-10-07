@@ -5,6 +5,6 @@ namespace codex_backend.Application.Repositories.Interfaces;
 public interface IStorePolicyPricesRepository
 {
     Task<StorePolicyPrice> CreateStorePolicyPricesAsync(StorePolicyPrice storePolicyPrice);
-    Task<StorePolicyPrice> GetPolicyPriceByIdAsync(Guid policeId);
+    Task<StorePolicyPrice?> GetPolicyPriceByIdAsync(Guid policeId);
     Task<bool> UpdateStorePolicyPricesAsync( StorePolicyPrice storePolicyPrice);
 }

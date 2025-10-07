@@ -47,8 +47,6 @@ public class BookValidator
         if (dto.CategoryId == Guid.Empty)
             errors.Add("CategoryId must be set.");
             
-        if (dto.CreatedAt.HasValue && dto.CreatedAt.Value > DateTime.UtcNow.AddMinutes(1))
-            errors.Add("CreatedAt cannot be in the future.");
 
         return errors;
     }
@@ -91,9 +89,6 @@ public class BookValidator
 
         if (dto.CategoryId == Guid.Empty)
             errors.Add("CategoryId must be set.");
-
-        if (dto.UpdatedAt.HasValue && dto.UpdatedAt.Value > DateTime.UtcNow.AddMinutes(1))
-            errors.Add("UpdatedAt cannot be in the future.");
 
         return errors;
     }
