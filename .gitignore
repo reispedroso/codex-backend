@@ -1,0 +1,16 @@
+# Dependency directories
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Environment files
+.env
+
+# Rider files
+.idea/
+
+# Visual Studio Code files
+.vscode/
