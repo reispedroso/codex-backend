@@ -5,6 +5,7 @@ using codex_backend.Helpers;
 using codex_backend.Models;
 using codex_backend.Application.Factories;
 using codex_backend.Application.Services.Interfaces;
+using codex_backend.Application.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -26,7 +27,7 @@ IUserFactory factory
         const string defaultRoleName = "Client";
         var defaultRoleId = await _roleRepository.GetRoleIdAsync(defaultRoleName);
         if (defaultRoleId == Guid.Empty)
-            throw new InvalidOperationException($"Default role '{defaultRoleName}' not found");
+            throw new InvalidException($"Default role '{defaultRoleName}' not found");
 
         var newUser = await _factory.CreateUser(user, defaultRoleId);
 
@@ -53,9 +54,9 @@ IUserFactory factory
     {
         var errors = UserValidator.ValidateUpdate(user);
         if (errors.Any())
-            throw new ArgumentException(string.Join("; ", errors));
+            throw new ArgException(string.Join("; ", errors));
 
-        var updateUser = await _userRepository.GetUserByIdAsync(id) ?? throw new Exception("User not found");
+        var updateUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException("User not found");
 
 
         updateUser.Username = user.Username;
@@ -83,7 +84,7 @@ IUserFactory factory
 
     public async Task DeleteUserAsync(Guid id)
     {
-        var deleteUser = await _userRepository.GetUserByIdAsync(id) ?? throw new Exception("User not found");
+        var deleteUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException("User not found");
 
         deleteUser.DeletedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
@@ -98,7 +99,7 @@ IUserFactory factory
     public async Task<UserReadDto> GetUserByIdAsync(Guid id)
     {
         var userById = await _userRepository.GetUserByIdAsync(id)
-            ?? throw new Exception("User not found");
+            ?? throw new NotFoundException("User not found");
 
         return MapToDto(userById);
     }
@@ -127,13 +128,13 @@ IUserFactory factory
         switch (emailInUse)
         {
             case true when usernameInUse:
-                throw new Exception("Email and username already in use");
+                throw new DuplicateException("Email and username already in use");
             case true:
-                throw new Exception("Email in use");
+                throw new DuplicateException("Email in use");
         }
 
         if (usernameInUse)
-            throw new Exception("Username in use");
+            throw new DuplicateException("Username in use");
     }
 
 

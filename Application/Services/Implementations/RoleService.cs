@@ -1,3 +1,4 @@
+using codex_backend.Application.Common.Exceptions;
 using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Application.Services.Interfaces;
 
@@ -16,7 +17,7 @@ public class RoleService(IRoleRepository repository)
     public async Task<string?> GetRoleNameAsync(Guid Id)
     {
         return await _repository.GetRoleNameAsync(Id)
-        ?? throw new Exception("Role not found");
+        ?? throw new NotFoundException("Role not found");
     }
 
     

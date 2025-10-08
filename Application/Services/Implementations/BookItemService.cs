@@ -4,6 +4,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Helpers;
 using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
+using codex_backend.Application.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -33,7 +34,7 @@ public class BookItemService(IBookItemRepository bookItemRepository) : IBookItem
     public async Task<BookItemReadDto> GetBookItemByIdAsync(Guid id)
     {
         var bookItemById = await _bookItemRepository.GetBookItemByIdAsync(id)
-        ?? throw new Exception($"Book not found in this Bookstore! Book id: {id}");
+        ?? throw new NotFoundException($"Book not found in this Bookstore! Book id: {id}");
 
         return MapToDto(bookItemById);
     }

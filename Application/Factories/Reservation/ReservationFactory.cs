@@ -1,3 +1,4 @@
+using codex_backend.Application.Common.Exceptions;
 using codex_backend.Application.Dtos;
 using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Enums;
@@ -16,10 +17,10 @@ public class ReservationFactory(
     public async Task<Reservation> CreateReservationAsync(ReservationCreateDto dto, Guid userId)
     {
         var policyPrice = await _policyPriceRepo.GetPolicyPriceByIdAsync(dto.PriceId)
-        ?? throw new Exception("Policy not found");
+        ?? throw new NotFoundException("Policy not found");
 
         var bookItem = await bookItemRepo.GetBookItemByIdAsync(dto.BookItemId)
-        ?? throw new Exception("Bookitem not found");
+        ?? throw new NotFoundException("Bookitem not found");
 
         var basePrice = policyPrice.Price;
 

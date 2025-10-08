@@ -4,6 +4,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Helpers;
 using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
+using codex_backend.Application.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -14,7 +15,7 @@ public class AuthorService(IAuthorRepository AuthorRepository) : IAuthorService
     public async Task<AuthorReadDto> CreateAuthorAsync(AuthorCreateDto dto)
     {
 
-        if (await _AuthorRepository.GetAuthorByNameAsync(dto.Name) is not null) throw new Exception($"Author with name {dto.Name} already registered");
+        if (await _AuthorRepository.GetAuthorByNameAsync(dto.Name) is not null) throw new DuplicateException($"Author with name {dto.Name} already registered");
 
         var newAuthor = new Author
         {
@@ -39,14 +40,14 @@ public class AuthorService(IAuthorRepository AuthorRepository) : IAuthorService
     public async Task<AuthorReadDto> GetAuthorByIdAsync(Guid id)
     {
         var AuthorById = await _AuthorRepository.GetAuthorByIdAsync(id)
-        ?? throw new Exception($"Author with {id} not found");
+        ?? throw new NotFoundException($"Author with {id} not found");
         return MapToDto(AuthorById);
     }
 
     public async Task<AuthorReadDto> GetAuthorByNameAsync(string name)
     {
         var AuthorByName = await _AuthorRepository.GetAuthorByNameAsync(name)
-        ?? throw new Exception($"Author: {name} not founded");
+        ?? throw new NotFoundException($"Author: {name} not founded");
         return MapToDto(AuthorByName);
     }
 

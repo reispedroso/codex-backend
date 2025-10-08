@@ -1,3 +1,4 @@
+using codex_backend.Application.Common.Exceptions;
 using codex_backend.Application.Dtos;
 using codex_backend.Application.Factories;
 using codex_backend.Application.Repositories.Interfaces;
@@ -21,10 +22,10 @@ public class RentalService(
     public async Task<RentalReadDto> CreateRentalAsync(Guid reservationId)
     {
         var reservation = await _reservationRepository.GetReservationByIdAsync(reservationId)
-        ?? throw new Exception("Reservation not found");
+        ?? throw new NotFoundException("Reservation not found");
 
         if (reservation.Status != ReservationStatus.Ready)
-            throw new Exception("Reservation is not ready to be picked off yet");
+            throw new NotFoundException("Reservation is not ready to be picked off yet");
 
         var newRental = _factory.CreateRentalFromReservation(reservation);
 

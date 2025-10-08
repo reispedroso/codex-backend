@@ -4,6 +4,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Helpers;
 using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
+using codex_backend.Application.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -15,7 +16,7 @@ public class BookService(IBookRepository bookRepository) : IBookService
     {
         InvalidFieldsHelper.ThrowIfInvalid(BookValidator.ValidateBook(dto));
 
-        if (await _bookRepository.GetBookByNameAsync(dto.Title) is not null) throw new Exception($"Book with name {dto.Title} already registered");
+        if (await _bookRepository.GetBookByNameAsync(dto.Title) is not null) throw new DuplicateException($"Book with name {dto.Title} already registered");
 
         var newBook = new Book
         {
@@ -39,21 +40,21 @@ public class BookService(IBookRepository bookRepository) : IBookService
     }
     public async Task<IEnumerable<BookReadDto>> GetAllBooksAsync()
     {
-        var allBooks = await _bookRepository.GetAllBooksAsync() ?? throw new Exception("No bookstores available");
+        var allBooks = await _bookRepository.GetAllBooksAsync() ?? throw new NotFoundException("No bookstores available");
         return allBooks.Select(MapToDto);
     }
 
     public async Task<BookReadDto> GetBookByIdAsync(Guid id)
     {
         var bookById = await _bookRepository.GetBookByIdAsync(id)
-        ?? throw new Exception($"Book with {id} not found");
+        ?? throw new NotFoundException($"Book with {id} not found");
         return MapToDto(bookById);
     }
 
     public async Task<BookReadDto> GetBookByNameAsync(string name)
     {
         var bookByName = await _bookRepository.GetBookByNameAsync(name)
-        ?? throw new Exception($"Book: {name} not founded");
+        ?? throw new NotFoundException($"Book: {name} not founded");
         return MapToDto(bookByName);
     }
 

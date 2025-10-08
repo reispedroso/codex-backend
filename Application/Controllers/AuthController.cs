@@ -13,29 +13,16 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserCreateDto userCreateDto)
     {
-        try
-        {
-            var userReadDto = await _authService.RegisterAsync(userCreateDto);
+        var userReadDto = await _authService.RegisterAsync(userCreateDto);
 
-            return StatusCode(201, userReadDto);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        return StatusCode(201, userReadDto);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
     {
-        try
-        {
-            var userReadDto = await _authService.LoginAsync(userLoginDto);
-            return Ok(userReadDto);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+
+        var userReadDto = await _authService.LoginAsync(userLoginDto);
+        return Ok(userReadDto);
     }
 }

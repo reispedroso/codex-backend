@@ -1,3 +1,4 @@
+using codex_backend.Application.Common.Exceptions;
 using codex_backend.Application.Dtos;
 using codex_backend.Application.Services.Interfaces;
 using codex_backend.Application.Services.Token;
@@ -16,24 +17,35 @@ public class AuthService(
     private readonly IJwtService _jwtService = jwtService;
     private readonly IRoleService _roleService = roleService;
 
-   public async Task<UserReadDto> RegisterAsync(UserCreateDto userDto)
+    public async Task<LoginResponseDto> RegisterAsync(UserCreateDto userDto)
     {
         var user = await _userService.CreateUserAsync(userDto);
 
-        var token = await _jwtService.GenerateTokenAsync(user);
+      var tokenResult = await _jwtService.GenerateTokenAsync(user);
+        var roleName = await _roleService.GetRoleNameAsync(user.RoleId);
 
-        user.Token = token;
+        var responseDto = new LoginResponseDto
+        {
+            AccessToken = tokenResult.AccessToken,
+            Expiration = tokenResult.Expiration,
+            User = new UserInfoDto
+            {
+                Email = user.Email!,
+                Role = roleName!
+            }
+        };
 
-        return user;
+        return responseDto;
+      
     }
-    public async Task<UserReadDto> LoginAsync(UserLoginDto userLoginDto)
+    public async Task<LoginResponseDto> LoginAsync(UserLoginDto userLoginDto)
     {
         var user = await _userService.GetUserByEmailAsync(userLoginDto.Email)
-        ?? throw new Exception("Invalid email or password");
+        ?? throw new InvalidException("Invalid email or password");
 
         if (!PasswordHasher.Verify(userLoginDto.Password, user.Password_Hash!))
         {
-            throw new Exception("Invalid email or password");
+            throw new InvalidException("Invalid email or password");
         }
 
         var userReadDto = new UserReadDto
@@ -43,10 +55,21 @@ public class AuthService(
             RoleId = user.RoleId
         };
 
-        var token = await _jwtService.GenerateTokenAsync(userReadDto);
+        var tokenResult = await _jwtService.GenerateTokenAsync(userReadDto);
+        var roleName = await _roleService.GetRoleNameAsync(user.RoleId);
 
-        userReadDto.Token = token;
+        var responseDto = new LoginResponseDto
+        {
+            AccessToken = tokenResult.AccessToken,
+            Expiration = tokenResult.Expiration,
+            User = new UserInfoDto
+            {
+                Email = user.Email!,
+                Role = roleName!
+            }
+        };
 
-        return userReadDto;
+        return responseDto;
     }
+
 }

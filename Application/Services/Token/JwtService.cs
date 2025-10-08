@@ -13,7 +13,7 @@ public class JwtService(IOptions<TokenSettings> opt, IRoleService roleService) :
 {
     private readonly TokenSettings _settings = opt.Value;
     private readonly IRoleService _roleService = roleService;
-    public async Task<string> GenerateTokenAsync(UserReadDto user)
+    public async Task<TokenResultDto> GenerateTokenAsync(UserReadDto user)
     {
         var roleDto = await _roleService.GetRoleNameAsync(user.RoleId);
 
@@ -27,16 +27,24 @@ public class JwtService(IOptions<TokenSettings> opt, IRoleService roleService) :
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var expirationDate = DateTime.UtcNow.AddDays(_settings.ExpiresInDays);
+
         var token = new JwtSecurityToken(
         issuer: _settings.Issuer,
         audience: _settings.Audience,
         claims: claims,
-        expires: DateTime.SpecifyKind(DateTime.UtcNow.AddDays(_settings.ExpiresInDays), DateTimeKind.Utc),
+        expires: expirationDate,
         signingCredentials: creds
         );
 
-          return new JwtSecurityTokenHandler().WriteToken(token);
-    }
+        var handler = new JwtSecurityTokenHandler();
+        return new TokenResultDto
+        {
+            AccessToken = handler.WriteToken(token),
+            Expiration = expirationDate
+        };
+
+        }
 
     public ClaimsPrincipal? ValidateToken(string token)
     {

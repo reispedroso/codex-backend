@@ -4,6 +4,6 @@ namespace codex_backend.Application.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<UserReadDto> RegisterAsync(UserCreateDto userDto);
-    Task<UserReadDto> LoginAsync(UserLoginDto userLoginDto);
+    Task<LoginResponseDto> RegisterAsync(UserCreateDto userDto);
+    Task<LoginResponseDto> LoginAsync(UserLoginDto userLoginDto);
 }
