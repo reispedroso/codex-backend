@@ -34,6 +34,13 @@ public class ReservationRepository(AppDbContext context) : IReservationRepositor
         return await _context.Reservations.FirstOrDefaultAsync(rs => rs.Id == reservationId);
     }
 
+    public async Task<Reservation?> GetReservationWithDetailsAsync(Guid reservationId)
+        {
+            return await _context.Reservations
+                .Include(reservation => reservation.BookItem) 
+                    .ThenInclude(bookItem => bookItem!.Bookstore) 
+                .FirstOrDefaultAsync(reservation => reservation.Id == reservationId);
+        }
     public async Task<bool> UpdateReservationAsync(Reservation reservation)
     {
         _context.Reservations.Update(reservation);

@@ -12,7 +12,7 @@ public class UserController(IUserService service) : ControllerBase
 {
     private readonly IUserService _service = service;
 
-    [HttpPost("create-user")]
+    [HttpPost("create")]
     public async Task<IActionResult> Post([FromBody] UserCreateDto user)
     {
         var createdUser = await _service.CreateUserAsync(user);
@@ -20,14 +20,14 @@ public class UserController(IUserService service) : ControllerBase
 
     }
 
-    [HttpGet("get-all-users")]
+    [HttpGet("all-users")]
     public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAll()
     {
         var users = await _service.GetAllUsersAsync();
         return Ok(users);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("by-id/{id}")]
     public async Task<ActionResult<UserReadDto>> GetById(Guid id)
     {
 
@@ -36,7 +36,7 @@ public class UserController(IUserService service) : ControllerBase
 
     }
 
-    [HttpPut("update-user/{id}")]
+    [HttpPut("update/{id}")]
     public async Task<ActionResult<UserReadDto>> Put(Guid id, [FromBody] UserUpdateDto user)
     {
         var updatedUser = await _service.UpdateUserAsync(id, user);
@@ -44,7 +44,7 @@ public class UserController(IUserService service) : ControllerBase
 
     }
 
-    [HttpDelete("delete-user/{id}")]
+    [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _service.DeleteUserAsync(id);

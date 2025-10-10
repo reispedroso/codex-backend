@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text.Json;
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
-namespace codex_backend.Application.Common.Middleware;
+namespace codex_backend.Application.Authorization.Common.Middleware;
 
 public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
 {
@@ -27,7 +27,7 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
         {
             NotFoundException => HttpStatusCode.NotFound,
             DuplicateException => HttpStatusCode.Conflict,
-            // Adicione outros tipos de exceção aqui
+
             _ => HttpStatusCode.InternalServerError,
         };
 

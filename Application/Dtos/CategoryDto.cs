@@ -1,22 +1,26 @@
-namespace codex_backend.Application.Dtos;
+using System.ComponentModel.DataAnnotations;
 
-public class CategoryCreateDto
+namespace codex_backend.Application.Dtos
 {
-    public string Name { get; set; } = string.Empty;
-}
+    public class CategoryCreateDto
+    {
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string Name { get; set; } = string.Empty;
+    }
 
-public class CategoryUpdateDto
-{
+    public class CategoryUpdateDto
+    {
+        [Required]
+        [StringLength(100, MinimumLength = 2)]
+        public string Name { get; set; } = string.Empty;
+    }
 
-    public string Name { get; set; } = string.Empty;
-}
-
-// O ReadDto permanece o mesmo.
-public class CategoryReadDto
-{
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-    public DateTime DeletedAt { get; set; }
+    public class CategoryReadDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+    }
 }

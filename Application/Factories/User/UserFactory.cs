@@ -17,7 +17,7 @@ public class UserFactory : IUserFactory
             Email = dto.Email,
             Password_Hash = PasswordHasher.Hash(dto.Password!),
             RoleId = roleId,
-            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             DeletedAt = null
         };

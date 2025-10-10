@@ -1,3 +1,4 @@
+using codex_backend.Application.Authorization.Wrappers;
 using codex_backend.Application.Dtos;
 using codex_backend.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -11,52 +12,58 @@ namespace codex_backend.Application.Controllers;
 public class BookController(IBookService service) : ControllerBase
 {
     private readonly IBookService _service = service;
-    [HttpPost("create-book")]
-    [Authorize]
+    [HttpPost("create")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Post([FromBody] BookCreateDto book)
     {
-        var createdBook = await _service.CreateBookAsync(book);
-        return Ok(createdBook.Title);
+        var newBook = await _service.CreateBookAsync(book);
 
+        var response = new ApiSingleResponse<BookReadDto>(true, "Book created successfully.", newBook);
+
+        return Ok(response);
     }
 
-    [HttpGet("get-all-books")]
+    [HttpGet("get-all")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<BookReadDto>>> GetAll()
     {
         var books = await _service.GetAllBooksAsync();
-        return Ok(books);
-
+        var response = new ApiListResponse<BookReadDto>(true, "", books);
+        return Ok(response);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<BookReadDto>> BetById(Guid id)
+    [HttpGet("by-id/{id}")]
+    [AllowAnonymous]
+    public async Task<ActionResult<BookReadDto>> GetById(Guid Id)
     {
-        var book = await _service.GetBookByIdAsync(id);
-        return Ok(book);
-
+        var book = await _service.GetBookByIdAsync(Id);
+        var response = new ApiSingleResponse<BookReadDto>(true, "Book by id", book);
+        return Ok(response);
     }
 
     [HttpGet("by-name/{title}")]
-    public async Task<ActionResult<BookReadDto>> GetByName(string title)
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<BookReadDto>>> GetByName(string title)
     {
-        var book = await _service.GetBookByNameAsync(title);
-        return Ok(book);
-
+        var books = await _service.SearchBooksByTitleAsync(title);
+        var response = new ApiListResponse<BookReadDto>(true, "Book by name", books);
+        return Ok(response);
     }
 
-    [HttpPut("update-book/{id}")]
+    [HttpPut("update/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<BookReadDto>> Put(Guid id, [FromBody] BookUpdateDto book)
     {
         var updatedBook = await _service.UpdateBookAsync(id, book);
-        return Ok(updatedBook);
-
+        var response = new ApiSingleResponse<BookReadDto>(true, "Book by name", updatedBook);
+        return Ok(response);
     }
 
-    [HttpDelete("delete-book/{id}")]
+    [HttpDelete("delete/{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         await _service.DeleteBookAsync(id);
         return NoContent();
-
     }
 }

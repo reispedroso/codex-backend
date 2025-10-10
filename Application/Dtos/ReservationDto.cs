@@ -6,15 +6,13 @@ namespace codex_backend.Application.Dtos
     {
 
         public Guid BookItemId { get; set; }
-        public Guid PoliciesId { get; set; }
-
-        public Guid PriceId { get; set; } 
+        public int DurationInMonths { get; set; }
         public DateTime PickupDate { get; set; }
     }
 
     public class ReservationUpdateDto
     {
-
+        public Guid Id { get; set; }
         public ReservationStatus Status { get; set; }
         public DateTime PickupDate { get; set; }
     }

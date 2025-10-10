@@ -1,4 +1,4 @@
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
 namespace codex_backend.Helpers;
 

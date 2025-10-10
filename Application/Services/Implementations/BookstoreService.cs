@@ -1,4 +1,4 @@
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 using codex_backend.Application.Dtos;
 using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Application.Services.Interfaces;
@@ -31,11 +31,10 @@ public class BookstoreService(IBookstoreRepository bookstoreRepository) : IBooks
             Street = dto.Street,
             City = dto.City,
             State = dto.State,
+            Country = dto.Country,
             ZipCode = dto.ZipCode,
             StoreLogoUrl = dto.StoreLogoUrl,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = null,
-            DeletedAt = null
+            CreatedAt = DateTime.UtcNow
         };
 
         await _bookstoreRepository.CreateBookstoreAsync(newBookstore);
@@ -102,6 +101,7 @@ public class BookstoreService(IBookstoreRepository bookstoreRepository) : IBooks
         bookstoreToDelete.DeletedAt = DateTime.UtcNow;
         await _bookstoreRepository.UpdateBookstoreAsync(bookstoreToDelete);
     }
+
 
     private static BookstoreReadDto MapToDto(Bookstore b) => new()
     {

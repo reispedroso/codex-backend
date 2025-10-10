@@ -26,4 +26,11 @@ public class StorePolicyRepository(AppDbContext context) : IStorePolicyRepositor
         var updated = await _context.SaveChangesAsync();
         return updated > 0;
     }
+    
+
+    public async Task<StorePolicy?> GetActivePolicyForBookstoreAsync(Guid bookstoreId)
+    {
+        return await _context.StorePolicy
+            .FirstOrDefaultAsync(p => p.BookstoreId == bookstoreId);
+    }
 }

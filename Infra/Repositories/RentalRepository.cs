@@ -23,7 +23,6 @@ public class RentalRepository(AppDbContext context) : IRentalRepository
 
     public async Task<IEnumerable<Rental>> GetAllUserRentalsAsync(Guid userId)
     {
-        // return await _context.Rentals.Where(re => re.UserId == userId).ToListAsync();
         return await _context.Rentals
                                     .Include(re => re.User)
                                     .Where(re => re.User!.Id == userId)
@@ -33,7 +32,6 @@ public class RentalRepository(AppDbContext context) : IRentalRepository
     public async Task<Rental?> GetRentalByIdAsync(Guid rentalId)
     {
         return await _context.Rentals.FirstOrDefaultAsync(re => re.Id == rentalId);
-
     }
 
     public async Task<bool> UpdateRentalAsync(Rental rental)

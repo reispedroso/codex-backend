@@ -11,7 +11,7 @@ public class RentalController(IRentalService service) : ControllerBase
 {
     private readonly IRentalService _service = service;
 
-    [HttpPost("create-rental/{reservationId}")]
+    [HttpPost("create/{reservationId}")]
     public async Task<IActionResult> Post(Guid reservationId)
     {
         var newRental = await _service.CreateRentalAsync(reservationId);

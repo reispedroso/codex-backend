@@ -9,6 +9,5 @@ public class StorePolicy
     public int GracePeriodDays { get; set; }
     public int MaxRenewals { get; set; }
 
-    // Relação com preços
-    public ICollection<StorePolicyPrice> Prices { get; set; } = new List<StorePolicyPrice>();
+    public ICollection<StorePolicyPrice> Prices { get; set; } = [];
 }

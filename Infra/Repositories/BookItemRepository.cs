@@ -21,6 +21,13 @@ public class BookItemRepository(AppDbContext context) : IBookItemRepository
            .ToListAsync();
     }
 
+    public async Task<BookItem?> GetBookItemWithBookstoreAsync(Guid id)
+    {
+        return await _context.BookItems
+                             .Include(bi => bi.Bookstore) 
+                             .FirstOrDefaultAsync(bi => bi.Id == id);
+    }
+
     public async Task<BookItem?> GetBookItemByIdAsync(Guid bookItemId)
     {
         return await _context.BookItems.FirstOrDefaultAsync(bi => bi.Id == bookItemId);

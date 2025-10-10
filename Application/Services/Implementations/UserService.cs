@@ -5,7 +5,7 @@ using codex_backend.Helpers;
 using codex_backend.Models;
 using codex_backend.Application.Factories;
 using codex_backend.Application.Services.Interfaces;
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -63,7 +63,7 @@ IUserFactory factory
         updateUser.FirstName = user.FirstName;
         updateUser.LastName = user.LastName;
         updateUser.Email = user.Email;
-        updateUser.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+        updateUser.UpdatedAt = DateTime.UtcNow;
 
         await EnsureUsernameAndEmailNotInUse(user.Email, user.Username);
 
@@ -86,7 +86,7 @@ IUserFactory factory
     {
         var deleteUser = await _userRepository.GetUserByIdAsync(id) ?? throw new NotFoundException("User not found");
 
-        deleteUser.DeletedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+        deleteUser.DeletedAt = DateTime.UtcNow;
 
         await _userRepository.UpdateUserAsync(deleteUser);
     }

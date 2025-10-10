@@ -1,13 +1,13 @@
 using codex_backend.Application.Dtos;
 
-namespace codex_backend.Application.Services.Interfaces;
-
-public interface IAuthorService
+namespace codex_backend.Application.Services.Interfaces
 {
-    Task<AuthorReadDto> CreateAuthorAsync(AuthorCreateDto dto);
-    Task<IEnumerable<AuthorReadDto>> GetAllAuthorsAsync();
-    Task<AuthorReadDto> GetAuthorByIdAsync(Guid id);
-    Task<AuthorReadDto> GetAuthorByNameAsync(string name);
-    Task<AuthorReadDto> UpdateAuthorAsync(Guid id, AuthorUpdateDto dto);
-    Task DeleteAuthorAsync(Guid id);
+    public interface IAuthorService
+    {
+        Task<AuthorReadDto> CreateAuthorAsync(AuthorCreateDto dto);
+        Task<IEnumerable<AuthorReadDto>> GetAllAuthorsAsync();
+        Task<AuthorReadDto> GetAuthorByIdAsync(Guid id);
+        Task<AuthorReadDto> UpdateAuthorAsync(Guid id, AuthorUpdateDto dto);
+        Task DeleteAuthorAsync(Guid id);
+    }
 }

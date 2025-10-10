@@ -15,7 +15,7 @@ public class BookstoreConfiguration : IEntityTypeConfiguration<Bookstore>
                .HasMaxLength(200);
 
         builder.HasOne(bs => bs.User)
-               .WithMany(u => u.Bookstores) // agora o EF sabe a navegação
+               .WithMany(u => u.Bookstores)
                .HasForeignKey(bs => bs.OwnerUserId);
     }
 }

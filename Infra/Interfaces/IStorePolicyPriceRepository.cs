@@ -6,5 +6,6 @@ public interface IStorePolicyPricesRepository
 {
     Task<StorePolicyPrice> CreateStorePolicyPricesAsync(StorePolicyPrice storePolicyPrice);
     Task<StorePolicyPrice?> GetPolicyPriceByIdAsync(Guid policeId);
-    Task<bool> UpdateStorePolicyPricesAsync( StorePolicyPrice storePolicyPrice);
+    Task<bool> UpdateStorePolicyPricesAsync(StorePolicyPrice storePolicyPrice);
+    Task<StorePolicyPrice?> GetPriceByPolicyAndDurationAsync(Guid policyId, int durationInMonths);
 }

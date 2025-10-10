@@ -9,5 +9,5 @@ public interface IBookItemRepository
     Task<BookItem?> GetBookItemByIdAsync(Guid bookItemId); 
     Task<IEnumerable<BookItem>> GetAllBookItemsAsync();
     Task<bool> UpdateBookItemAsync(BookItem bookItem);
-
+    Task<BookItem?> GetBookItemWithBookstoreAsync(Guid id);
 }

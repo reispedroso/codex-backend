@@ -4,7 +4,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Helpers;
 using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -23,13 +23,22 @@ public class BookItemService(IBookItemRepository bookItemRepository) : IBookItem
             BookstoreId = dto.BookstoreId,
             Quantity = dto.Quantity,
             Condition = dto.Condition,
-            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             DeletedAt = null
         };
         await _bookItemRepository.CreateBookItemAsync(newBookItem);
         return MapToDto(newBookItem);
     }
+
+    public async Task<BookItem?> GetBookItemWithBookstoreAsync(Guid id)
+    {
+        var bookItem = await _bookItemRepository.GetBookItemWithBookstoreAsync(id)
+        ?? throw new NotFoundException($"BookItem with id {id} not found.");
+
+        return bookItem;
+    }
+
 
     public async Task<BookItemReadDto> GetBookItemByIdAsync(Guid id)
     {
@@ -40,19 +49,30 @@ public class BookItemService(IBookItemRepository bookItemRepository) : IBookItem
     }
 
     public async Task<BookItemReadDto> UpdateBookItemAsync(
-   Guid bookItemId,
-   BookItemUpdateDto dto)
+        Guid bookItemId,
+        BookItemUpdateDto dto)
     {
         InvalidFieldsHelper.ThrowIfInvalid(BookItemValidator.ValidateBookItemUpdate(dto));
 
         var updateBookItem = await _bookItemRepository.GetBookItemByIdAsync(bookItemId);
 
         updateBookItem!.Quantity = dto.Quantity;
-        updateBookItem.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc);
+        updateBookItem.UpdatedAt = DateTime.UtcNow;
 
         await _bookItemRepository.UpdateBookItemAsync(updateBookItem);
         return MapToDto(updateBookItem);
     }
+
+    public async Task<BookItemReadDto> DeleteBookItemAsync(Guid bookItemId)
+    {
+        var updateBookItem = await _bookItemRepository.GetBookItemByIdAsync(bookItemId);
+
+        updateBookItem!.DeletedAt = DateTime.UtcNow;
+
+        await _bookItemRepository.UpdateBookItemAsync(updateBookItem);
+        return MapToDto(updateBookItem);
+    }
+
 
     private static BookItemReadDto MapToDto(BookItem b) => new()
     {

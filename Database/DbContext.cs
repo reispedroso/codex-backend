@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using codex_backend.Models;
 using codex_backend.Database.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace codex_backend.Database;
 

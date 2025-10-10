@@ -1,10 +1,8 @@
 using codex_backend.Application.Dtos;
 using codex_backend.Models;
 using codex_backend.Application.Repositories.Interfaces;
-using codex_backend.Helpers;
-using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -23,7 +21,7 @@ public class AuthorService(IAuthorRepository AuthorRepository) : IAuthorService
             Name = dto.Name,
             Biography = dto.Biography,
             Nationality = dto.Nationality,
-            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             DeletedAt = null
         };
@@ -58,7 +56,7 @@ public class AuthorService(IAuthorRepository AuthorRepository) : IAuthorService
         updateAuthor!.Name = dto.Name;
         updateAuthor!.Biography = dto.Biography;
         updateAuthor!.Nationality = dto.Nationality;
-        updateAuthor.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc);
+        updateAuthor.UpdatedAt = DateTime.UtcNow;
 
         await _AuthorRepository.UpdateAuthorAsync(updateAuthor);
         return MapToDto(updateAuthor);
@@ -67,7 +65,7 @@ public class AuthorService(IAuthorRepository AuthorRepository) : IAuthorService
     {
         var deleteAuthor = await _AuthorRepository.GetAuthorByIdAsync(id);
 
-        deleteAuthor!.DeletedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc);
+        deleteAuthor!.DeletedAt = DateTime.UtcNow;
         await _AuthorRepository.UpdateAuthorAsync(deleteAuthor);
     }
 

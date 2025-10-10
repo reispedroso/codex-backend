@@ -12,9 +12,6 @@ namespace codex_backend.Application.Services.Interfaces
         Task<IEnumerable<BookstoreReadDto>> GetBookstoresByOwnerIdAsync(Guid ownerId);
         Task<BookstoreReadDto> UpdateBookstoreAsync(Guid id, BookstoreUpdateDto dto);
         Task DeleteBookstoreAsync(Guid id);
-
-        // Este é o novo método crucial para a autorização.
-        // Ele retorna a entidade completa, não um DTO.
         Task<Bookstore?> GetBookstoreModelByIdAsync(Guid id);
     }
 }

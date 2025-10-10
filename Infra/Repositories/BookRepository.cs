@@ -26,11 +26,17 @@ public class BookRepository(AppDbContext context) : IBookRepository
     {
         return await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
     }
-
-    public async Task<Book?> GetBookByNameAsync(string bookName)
+    public async Task<Book?> GetBookByTitleAsync(string title)
     {
+        return await _context.Books.FirstOrDefaultAsync(b => b.Title == title);
+    }
+    public async Task<IEnumerable<Book?>> SearchBooksByTitleAsync(string searchTerm)
+    {
+        var toLowerTerm = searchTerm.ToLower();
+
         return await _context.Books
-         .FirstOrDefaultAsync(b => b.Title == bookName);
+        .Where(b => b.Title!.ToLower().Contains(toLowerTerm))
+        .ToListAsync();
     }
 
     public async Task<bool> UpdateBookAsync(Book book)

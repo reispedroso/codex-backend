@@ -13,16 +13,16 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserCreateDto userCreateDto)
     {
-        var userReadDto = await _authService.RegisterAsync(userCreateDto);
+        var registerResponse = await _authService.RegisterAsync(userCreateDto);
 
-        return StatusCode(201, userReadDto);
+        return Created(string.Empty, registerResponse);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
     {
 
-        var userReadDto = await _authService.LoginAsync(userLoginDto);
-        return Ok(userReadDto);
+        var loginResponse = await _authService.LoginAsync(userLoginDto);
+        return Ok(loginResponse);
     }
 }

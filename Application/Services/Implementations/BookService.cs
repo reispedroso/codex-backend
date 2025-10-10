@@ -4,7 +4,7 @@ using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Helpers;
 using codex_backend.Application.Validators;
 using codex_backend.Application.Services.Interfaces;
-using codex_backend.Application.Common.Exceptions;
+using codex_backend.Application.Authorization.Common.Exceptions;
 
 namespace codex_backend.Application.Services.Implementations;
 
@@ -16,21 +16,21 @@ public class BookService(IBookRepository bookRepository) : IBookService
     {
         InvalidFieldsHelper.ThrowIfInvalid(BookValidator.ValidateBook(dto));
 
-        if (await _bookRepository.GetBookByNameAsync(dto.Title) is not null) throw new DuplicateException($"Book with name {dto.Title} already registered");
+        if (await _bookRepository.GetBookByTitleAsync(dto.Title) is not null) throw new DuplicateException($"Book with name {dto.Title} already registered");
 
         var newBook = new Book
         {
             Id = Guid.NewGuid(),
             Title = dto.Title,
             Synposis = dto.Synposis,
-            PublicationDate = dto.PublicationDate,
+            PublicationDate = dto.PublicationDate.ToUniversalTime(),
             Language = dto.Language,
             Publisher = dto.Publisher,
             PageCount = dto.PageCount,
             CoverUrl = dto.CoverUrl,
             AuthorId = dto.AuthorId,
             CategoryId = dto.CategoryId,
-            CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc),
+            CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             DeletedAt = null
         };
@@ -51,11 +51,20 @@ public class BookService(IBookRepository bookRepository) : IBookService
         return MapToDto(bookById);
     }
 
-    public async Task<BookReadDto> GetBookByNameAsync(string name)
+    public async Task<BookReadDto> GetBookByTitleAsync(string title)
     {
-        var bookByName = await _bookRepository.GetBookByNameAsync(name)
+        var specificBook = await _bookRepository.GetBookByTitleAsync(title)
+        ?? throw new NotFoundException($"Book with {title} not found");
+
+        return MapToDto(specificBook);
+        
+    }
+
+    public async Task<IEnumerable<BookReadDto>> SearchBooksByTitleAsync(string name)
+    {
+        var booksByTitle = await _bookRepository.SearchBooksByTitleAsync(name)
         ?? throw new NotFoundException($"Book: {name} not founded");
-        return MapToDto(bookByName);
+        return booksByTitle.Select(MapToDto!);
     }
 
     public async Task<BookReadDto> UpdateBookAsync(Guid id, BookUpdateDto dto)
@@ -65,14 +74,14 @@ public class BookService(IBookRepository bookRepository) : IBookService
 
         updateBook!.Title = dto.Title;
         updateBook.Synposis = dto.Synposis;
-        updateBook.PublicationDate = dto.PublicationDate;
+        updateBook.PublicationDate = dto.PublicationDate.ToUniversalTime();
         updateBook.Language = dto.Language;
         updateBook.Publisher = dto.Publisher;
         updateBook.PageCount = dto.PageCount;
         updateBook.CoverUrl = dto.CoverUrl;
         updateBook.AuthorId = dto.AuthorId;
         updateBook.CategoryId = dto.CategoryId;
-        updateBook.UpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc);
+        updateBook.UpdatedAt = DateTime.UtcNow;
 
         await _bookRepository.UpdateBookAsync(updateBook);
         return MapToDto(updateBook);
@@ -81,7 +90,7 @@ public class BookService(IBookRepository bookRepository) : IBookService
     {
         var deleteBook = await _bookRepository.GetBookByIdAsync(id);
 
-        deleteBook!.DeletedAt = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-3), DateTimeKind.Utc);
+        deleteBook!.DeletedAt = DateTime.UtcNow;
         await _bookRepository.UpdateBookAsync(deleteBook);
     }
 
@@ -91,8 +100,13 @@ public class BookService(IBookRepository bookRepository) : IBookService
         Title = b.Title!,
         Synposis = b.Synposis!,
         AuthorId = b.AuthorId,
+        PublicationDate = b.PublicationDate,
+        Language = b.Language!,
+        Publisher = b.Publisher!,
+        PageCount = b.PageCount,
+        CoverUrl = b.CoverUrl!,
         CategoryId = b.CategoryId,
         CreatedAt = b.CreatedAt,
-        UpdatedAt = b.UpdatedAt
+        UpdatedAt = b.UpdatedAt,
     };
 }

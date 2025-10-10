@@ -11,16 +11,16 @@ using codex_backend.Application.Handlers;
 using codex_backend.Application.Settings;
 using codex_backend.Application.Factories;
 using codex_backend.Application.Services.Token;
-using codex_backend.Application.Common.Middleware;
+using codex_backend.Application.Authorization.Common.Middleware;
 using codex_backend.Application.Services.Interfaces;
 using codex_backend.Application.Authorization.Handlers;
 using codex_backend.Application.Repositories.Interfaces;
 using codex_backend.Application.Services.Implementations;
 using codex_backend.Application.Authorization.Requirements;
 
-var builder = WebApplication.CreateBuilder(args);
-
 Env.Load();
+
+var builder = WebApplication.CreateBuilder(args);
 
 var host = Environment.GetEnvironmentVariable("DB_HOST");
 var port = Environment.GetEnvironmentVariable("DB_PORT");
@@ -29,6 +29,14 @@ var user = Environment.GetEnvironmentVariable("DB_USER");
 var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
 var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={password}";
+
+
+var jwtKey = builder.Configuration["TokenSettings:Key"];
+
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("A chave JWT (Jwt:Key) não foi encontrada ou está vazia na configuração.");
+}
 
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
@@ -61,16 +69,18 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = tokenSettings.Audience,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Key))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)) 
     };
 });
 
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("CanManageBookstorePolicy", policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("CanManageBookstorePolicy", policy =>
         policy.AddRequirements(new ResourceOwnerRequirement()));
-});
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("CanManageReservationPolicy", policy =>
+        policy.AddRequirements(new ResourceOwnerRequirement()));
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -95,7 +105,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 //Services
-builder.Services.AddScoped<IBookService,BookService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBookItemService, BookItemService>();
 builder.Services.AddScoped<IBookstoreService, BookstoreService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
@@ -104,6 +116,8 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStorePolicyService, StorePolicyService>();
+
 
 //Factories
 builder.Services.AddScoped<IReservationFactory, ReservationFactory>();
@@ -113,6 +127,7 @@ builder.Services.AddScoped<IUserFactory, UserFactory>();
 //Handlers
 builder.Services.AddScoped<InventoryHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, BookstoreAuthorizationHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, ReservationAuthorizationHandler>();
 
 var app = builder.Build();
 
@@ -122,7 +137,7 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 // app.UseJwtMiddleware(); // <-- Comentado
 
 app.UseAuthorization();

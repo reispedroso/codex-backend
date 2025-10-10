@@ -11,10 +11,10 @@ public static class ReservationValidator
 
         if (dto.BookItemId == Guid.Empty)
             errors.Add("BookItemId is required");
-        if (dto.PoliciesId == Guid.Empty)
-            errors.Add("PoliciesId is required");
 
-        // Datas
+        if (dto.DurationInMonths <= 0)
+            errors.Add("DurationInMonths must be a positive number.");
+
         if (dto.PickupDate == default)
             errors.Add("PickupDate must be set");
         else if (dto.PickupDate < DateTime.UtcNow)

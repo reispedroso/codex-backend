@@ -27,4 +27,10 @@ public class StorePolicyPriceRepository(AppDbContext context) : IStorePolicyPric
         var updated = await _context.SaveChangesAsync();
         return updated > 0;
     }
+
+        public async Task<StorePolicyPrice?> GetPriceByPolicyAndDurationAsync(Guid policyId, int durationInMonths)
+    {
+        return await _context.StorePolicyPrice
+            .FirstOrDefaultAsync(p => p.StorePolicyId == policyId && p.DurationInMonths == durationInMonths);
+    }
 }

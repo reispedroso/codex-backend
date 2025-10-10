@@ -7,7 +7,8 @@ public interface IBookService
     Task<BookReadDto> CreateBookAsync(BookCreateDto dto);
     Task<IEnumerable<BookReadDto>> GetAllBooksAsync();
     Task<BookReadDto> GetBookByIdAsync(Guid id);
-    Task<BookReadDto> GetBookByNameAsync(string name);
+    Task<BookReadDto> GetBookByTitleAsync(string title);
+    Task<IEnumerable<BookReadDto>> SearchBooksByTitleAsync(string name);
     Task<BookReadDto> UpdateBookAsync(Guid id, BookUpdateDto dto);
     Task DeleteBookAsync(Guid id);
 }

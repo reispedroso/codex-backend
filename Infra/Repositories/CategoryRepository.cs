@@ -16,7 +16,7 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         return category;
     }
 
-    public async Task<IEnumerable<Category>> GetAllCategorysAsync()
+    public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
     {
         return await _context.Categories.ToListAsync();
     }
