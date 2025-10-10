@@ -36,7 +36,7 @@ Codex is a RESTful API built with C\# and .NET 8, designed to power a comprehens
 ### 1\. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/codex-backend.git
+git clone https://github.com/reispedroso/codex-backend.git
 cd codex-backend
 ```
 
