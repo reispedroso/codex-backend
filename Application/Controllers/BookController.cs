@@ -25,7 +25,7 @@ public class BookController(IBookService service) : ControllerBase
 
     [HttpGet("get-all")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<BookReadDto>>> GetAll()
+    public async Task<ActionResult> GetAll()
     {
         var books = await _service.GetAllBooksAsync();
         var response = new ApiListResponse<BookReadDto>(true, "", books);
@@ -34,7 +34,7 @@ public class BookController(IBookService service) : ControllerBase
 
     [HttpGet("by-id/{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<BookReadDto>> GetById(Guid Id)
+    public async Task<ActionResult> GetById(Guid Id)
     {
         var book = await _service.GetBookByIdAsync(Id);
         var response = new ApiSingleResponse<BookReadDto>(true, "Book by id", book);

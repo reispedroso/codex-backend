@@ -30,7 +30,7 @@ public class BookstoreController(
     }
 
     [HttpGet("get-all")]
-    public async Task<ActionResult<IEnumerable<BookstoreReadDto>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var bookstores = await _bookstoreService.GetAllBookstoresAsync();
         var response = new ApiListResponse<BookstoreReadDto>(true, "Available bookstores", bookstores);
@@ -38,7 +38,7 @@ public class BookstoreController(
     }
 
     [HttpGet("my-bookstores")]
-    public async Task<ActionResult<IEnumerable<BookstoreReadDto>>> GetMyBookstores()
+    public async Task<IActionResult> GetMyBookstores()
     {
         var loggedInUserId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var bookstores = await _bookstoreService.GetBookstoresByOwnerIdAsync(loggedInUserId);
@@ -47,7 +47,7 @@ public class BookstoreController(
     }
 
     [HttpGet("by-id/{id}")]
-    public async Task<ActionResult<BookstoreReadDto>> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var bookstore = await _bookstoreService.GetBookstoreByIdAsync(id);
         var response = new ApiSingleResponse<BookstoreReadDto>(true, "", bookstore);
@@ -55,7 +55,7 @@ public class BookstoreController(
     }
 
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<BookstoreReadDto>> Put(Guid id, [FromBody] BookstoreUpdateDto dto)
+    public async Task<IActionResult> Put(Guid id, [FromBody] BookstoreUpdateDto dto)
     {
         var bookstoreModel = await _bookstoreService.GetBookstoreModelByIdAsync(id);
         if (bookstoreModel is null)

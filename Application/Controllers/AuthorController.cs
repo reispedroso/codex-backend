@@ -23,7 +23,7 @@ public class AuthorController(IAuthorService service) : ControllerBase
 
     [HttpGet("get-all")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<AuthorReadDto>>> GetAll()
+    public async Task<ActionResult> GetAll()
     {
         var authors = await _service.GetAllAuthorsAsync();
         var response = new ApiListResponse<AuthorReadDto>(true, "", authors);
@@ -32,7 +32,7 @@ public class AuthorController(IAuthorService service) : ControllerBase
 
     [HttpGet("by-id/{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<AuthorReadDto>> GetById(Guid id)
+    public async Task<ActionResult> GetById(Guid id)
     {
         var author = await _service.GetAuthorByIdAsync(id);
         var response = new ApiSingleResponse<AuthorReadDto>(true, "", author);
@@ -40,7 +40,7 @@ public class AuthorController(IAuthorService service) : ControllerBase
     }
     
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<AuthorReadDto>> Update(Guid id, [FromBody] AuthorUpdateDto dto)
+    public async Task<ActionResult> Update(Guid id, [FromBody] AuthorUpdateDto dto)
     {
         var updatedAuthor = await _service.UpdateAuthorAsync(id, dto);
         var response = new ApiSingleResponse<AuthorReadDto>(true, "Author updated successfully", updatedAuthor);

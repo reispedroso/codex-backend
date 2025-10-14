@@ -28,7 +28,7 @@ public class UserController(IUserService service) : ControllerBase
     }
 
     [HttpGet("by-id/{id}")]
-    public async Task<ActionResult<UserReadDto>> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
 
         var user = await _service.GetUserByIdAsync(id);
@@ -37,7 +37,7 @@ public class UserController(IUserService service) : ControllerBase
     }
 
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<UserReadDto>> Put(Guid id, [FromBody] UserUpdateDto user)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UserUpdateDto user)
     {
         var updatedUser = await _service.UpdateUserAsync(id, user);
         return Ok(updatedUser);

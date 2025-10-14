@@ -25,14 +25,14 @@ public class BookItemController(
     }
 
     [HttpGet("by-id/{id}")]
-    public async Task<ActionResult<BookItemReadDto>> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var bookItem = await _service.GetBookItemByIdAsync(id);
         return Ok(bookItem);
     }
 
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<BookItemReadDto>> Put(Guid id, [FromBody] BookItemUpdateDto bookItem)
+    public async Task<IActionResult> Put(Guid id, [FromBody] BookItemUpdateDto bookItem)
     {
         var bookItemModel = await _service.GetBookItemWithBookstoreAsync(id);
         if (bookItemModel?.Bookstore is null)
@@ -52,7 +52,7 @@ public class BookItemController(
     }
 
     [HttpDelete("delete/{id}")]
-    public async Task<ActionResult<BookItemReadDto>> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var bookItemModel = await _service.GetBookItemWithBookstoreAsync(id);
         if (bookItemModel?.Bookstore is null)

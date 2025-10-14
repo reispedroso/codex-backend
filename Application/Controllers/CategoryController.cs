@@ -21,7 +21,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
 
     [HttpGet("get-all")]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<CategoryReadDto>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var categories = await _service.GetAllCategoriesAsync();
         return Ok(categories);
@@ -29,14 +29,14 @@ public class CategoryController(ICategoryService service) : ControllerBase
 
     [HttpGet("by-id/{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<CategoryReadDto>> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var category = await _service.GetCategoryByIdAsync(id);
         return Ok(category);
     }
     
     [HttpPut("update/{id}")]
-    public async Task<ActionResult<CategoryReadDto>> Update(Guid id, [FromBody] CategoryUpdateDto dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] CategoryUpdateDto dto)
     {
         var updatedCategory = await _service.UpdateCategoryAsync(id, dto);
         return Ok(updatedCategory);
