@@ -9,20 +9,27 @@ using System.Text;
 
 namespace codex_backend.Application.Services.Token;
 
-public class JwtService(IOptions<TokenSettings> opt, IRoleService roleService) : IJwtService
+public class JwtService(IOptions<TokenSettings> opt, IRoleService roleService, IBookstoreService bookstoreService) : IJwtService
 {
     private readonly TokenSettings _settings = opt.Value;
     private readonly IRoleService _roleService = roleService;
+    private readonly IBookstoreService _bookstoreService = bookstoreService;
     public async Task<TokenResultDto> GenerateTokenAsync(UserReadDto user)
     {
         var roleDto = await _roleService.GetRoleNameAsync(user.RoleId);
-
-        var claims = new[]
+        var ownedBookstores = await _bookstoreService.GetBookstoresByOwnerIdAsync(user.Id);
+        var isBookstoreOwner = ownedBookstores.Any();
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email!),
-            new Claim(ClaimTypes.Role, roleDto!)
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.Role, roleDto!)
         };
+      
+        if (isBookstoreOwner)
+        {
+            claims.Add(new Claim("is_bookstore_owner", "true"));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -44,7 +51,7 @@ public class JwtService(IOptions<TokenSettings> opt, IRoleService roleService) :
             Expiration = expirationDate
         };
 
-        }
+    }
 
     public ClaimsPrincipal? ValidateToken(string token)
     {
